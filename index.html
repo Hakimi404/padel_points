@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Padel Arena</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<div class="arena">
+
+  <h1>🎾 Padel Arena</h1>
+  <div id="roundBadge" class="round-badge">Round –</div>
+
+  <!-- CURRENT MATCH -->
+  <div class="match-card">
+    <div id="playerA" class="player left">—</div>
+    <div class="vs">VS</div>
+    <div id="playerB" class="player right">—</div>
+  </div>
+
+  <!-- SCORE INPUT -->
+  <div class="score-input">
+    <input id="scoreA" type="number" placeholder="A" />
+    <input id="scoreB" type="number" placeholder="B" />
+  </div>
+
+  <div class="actions">
+    <button id="startBtn" class="btn start">START SESSION</button>
+    <button id="nextBtn" class="btn next" disabled>NEXT ROUND</button>
+  </div>
+
+  <!-- LEADERBOARD -->
+  <h2>Leaderboard</h2>
+  <table class="leaderboard">
+    <thead>
+      <tr>
+        <th>Player</th>
+        <th>R</th>
+        <th>W</th>
+        <th>L</th>
+        <th>T</th>
+        <th>Pts</th>
+      </tr>
+    </thead>
+    <tbody id="leaderboard"></tbody>
+  </table>
+
+  <!-- ROUNDS HISTORY -->
+  <h2>Rounds History (max 40)</h2>
+  <div class="history-wrapper">
+    <table class="history">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Match</th>
+          <th>Score</th>
+          <th>Winner</th>
+        </tr>
+      </thead>
+      <tbody id="history"></tbody>
+    </table>
+  </div>
+
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
