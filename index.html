@@ -29,17 +29,21 @@
       font-weight: 900;
     }
 
+    /* MATCH ROW (RESPONSIVE) */
     .match {
       display: flex;
       align-items: center;
-      gap: 20px;
+      justify-content: center;
+      gap: 12px;
       font-size: 2.5rem;
+      flex-wrap: wrap;
     }
 
     .player {
       font-weight: 800;
-      min-width: 160px;
       text-align: center;
+      max-width: 45vw;
+      word-break: break-word;
     }
 
     .score {
@@ -66,6 +70,11 @@
 
     button:hover {
       background: #22ff22;
+    }
+
+    .reset {
+      background: #ff4444;
+      color: #000;
     }
 
     h2 {
@@ -100,10 +109,26 @@
       justify-content: center;
     }
 
-    .reset {
-      margin-top: 20px;
-      background: #ff4444;
-      color: #000;
+    /* 📱 MOBILE TWEAKS */
+    @media (max-width: 480px) {
+      .round {
+        font-size: 2.2rem;
+      }
+
+      .match {
+        font-size: 1.8rem;
+      }
+
+      .score {
+        width: 70px;
+        height: 60px;
+        font-size: 2rem;
+      }
+
+      button {
+        font-size: 1.3rem;
+        padding: 14px 30px;
+      }
     }
   </style>
 </head>
@@ -111,8 +136,10 @@
 
 <div class="app">
 
+  <!-- ROUND -->
   <div id="roundText" class="round">ROUND 1</div>
 
+  <!-- CURRENT MATCH -->
   <div class="match">
     <div id="p1" class="player">Wael</div>
     <input id="s1" class="score" type="number" />
@@ -121,8 +148,10 @@
     <div id="p2" class="player">Hakimi</div>
   </div>
 
+  <!-- ACTION -->
   <button onclick="nextRound()">NEXT ROUND</button>
 
+  <!-- PLAYER STATS -->
   <h2>Player Stats</h2>
   <table>
     <thead>
@@ -138,6 +167,7 @@
     <tbody id="stats"></tbody>
   </table>
 
+  <!-- ROUND HISTORY -->
   <h2>Rounds History</h2>
   <div class="history-wrapper">
     <table>
