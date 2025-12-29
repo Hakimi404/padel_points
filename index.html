@@ -38,7 +38,8 @@
 
     .player {
       font-weight: 800;
-      min-width: 140px;
+      min-width: 160px;
+      text-align: center;
     }
 
     .score {
@@ -74,7 +75,7 @@
 
     table {
       width: 100%;
-      max-width: 700px;
+      max-width: 800px;
       border-collapse: collapse;
       margin-top: 10px;
       font-size: 1rem;
@@ -155,7 +156,7 @@
 <script>
   const players = ["Wael", "Hakimi", "Mojahed", "Hamzah"];
 
-  // FAIR ROTATION — nobody waits long
+  // Fair rotation: nobody waits long
   const rotation = [
     ["Wael", "Hakimi"],
     ["Mojahed", "Hamzah"],
@@ -168,9 +169,16 @@
   let roundIndex = 0;
   let roundNumber = 1;
 
-  const stats = {};
+  // Player statistics (DATA)
+  const playerStats = {};
   players.forEach(p => {
-    stats[p] = { rounds: 0, wins: 0, losses: 0, ties: 0, points: 0 };
+    playerStats[p] = {
+      rounds: 0,
+      wins: 0,
+      losses: 0,
+      ties: 0,
+      points: 0
+    };
   });
 
   function renderMatch() {
@@ -182,10 +190,12 @@
   }
 
   function renderStats() {
-    stats.innerHTML = "";
+    const statsBody = document.getElementById("stats");
+    statsBody.innerHTML = "";
+
     players.forEach(p => {
-      const s = stats[p];
-      stats.innerHTML += `
+      const s = playerStats[p];
+      statsBody.innerHTML += `
         <tr>
           <td>${p}</td>
           <td>${s.rounds}</td>
@@ -209,27 +219,27 @@
 
     const [a, b] = rotation[roundIndex % rotation.length];
 
-    // rounds
-    stats[a].rounds++;
-    stats[b].rounds++;
+    // rounds played
+    playerStats[a].rounds++;
+    playerStats[b].rounds++;
 
     // points
-    stats[a].points += aScore;
-    stats[b].points += bScore;
+    playerStats[a].points += aScore;
+    playerStats[b].points += bScore;
 
     // win / loss / tie
     if (aScore > bScore) {
-      stats[a].wins++;
-      stats[b].losses++;
+      playerStats[a].wins++;
+      playerStats[b].losses++;
     } else if (bScore > aScore) {
-      stats[b].wins++;
-      stats[a].losses++;
+      playerStats[b].wins++;
+      playerStats[a].losses++;
     } else {
-      stats[a].ties++;
-      stats[b].ties++;
+      playerStats[a].ties++;
+      playerStats[b].ties++;
     }
 
-    // history table
+    // round history
     results.innerHTML += `
       <tr>
         <td>${roundNumber}</td>
@@ -246,6 +256,7 @@
     renderMatch();
   }
 
+  // initial render
   renderMatch();
 </script>
 
