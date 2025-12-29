@@ -2,69 +2,172 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Padel Arena</title>
+  <title>Padel Round Control</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body {
+      margin: 0;
+      background: #000;
+      color: #fff;
+      font-family: system-ui, sans-serif;
+    }
+
+    .app {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      padding: 20px;
+    }
+
+    .round {
+      font-size: 3rem;
+      font-weight: 800;
+    }
+
+    .match {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      font-size: 2.5rem;
+    }
+
+    .player {
+      font-weight: 700;
+      min-width: 80px;
+      text-align: center;
+    }
+
+    .score {
+      width: 90px;
+      height: 70px;
+      font-size: 2.5rem;
+      text-align: center;
+      background: #111;
+      color: #0f0;
+      border: 2px solid #0f0;
+      border-radius: 10px;
+    }
+
+    button {
+      font-size: 1.5rem;
+      padding: 15px 40px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      background: #0f0;
+      color: #000;
+      font-weight: 700;
+    }
+
+    table {
+      margin-top: 20px;
+      width: 100%;
+      max-width: 600px;
+      border-collapse: collapse;
+      font-size: 1rem;
+    }
+
+    th, td {
+      padding: 8px;
+      border-bottom: 1px solid #333;
+      text-align: center;
+    }
+
+    .history {
+      max-height: 300px;
+      overflow-y: auto;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+    }
+  </style>
 </head>
 <body>
 
-<div class="arena">
+<div class="app">
 
-  <h1>🎾 Padel Arena</h1>
-  <div id="roundBadge" class="round-badge">Round –</div>
+  <div id="roundText" class="round">ROUND 1</div>
 
-  <!-- CURRENT MATCH -->
-  <div class="match-card">
-    <div id="playerA" class="player left">—</div>
-    <div class="vs">VS</div>
-    <div id="playerB" class="player right">—</div>
+  <div class="match">
+    <div id="p1" class="player">A</div>
+    <input id="s1" class="score" type="number" />
+    <div>:</div>
+    <input id="s2" class="score" type="number" />
+    <div id="p2" class="player">B</div>
   </div>
 
-  <!-- SCORE INPUT -->
-  <div class="score-input">
-    <input id="scoreA" type="number" placeholder="A" />
-    <input id="scoreB" type="number" placeholder="B" />
-  </div>
+  <button onclick="nextRound()">NEXT ROUND</button>
 
-  <div class="actions">
-    <button id="startBtn" class="btn start">START SESSION</button>
-    <button id="nextBtn" class="btn next" disabled>NEXT ROUND</button>
-  </div>
-
-  <!-- LEADERBOARD -->
-  <h2>Leaderboard</h2>
-  <table class="leaderboard">
-    <thead>
-      <tr>
-        <th>Player</th>
-        <th>R</th>
-        <th>W</th>
-        <th>L</th>
-        <th>T</th>
-        <th>Pts</th>
-      </tr>
-    </thead>
-    <tbody id="leaderboard"></tbody>
-  </table>
-
-  <!-- ROUNDS HISTORY -->
-  <h2>Rounds History (max 40)</h2>
-  <div class="history-wrapper">
-    <table class="history">
+  <div class="history">
+    <table>
       <thead>
         <tr>
-          <th>#</th>
+          <th>Round</th>
           <th>Match</th>
           <th>Score</th>
-          <th>Winner</th>
         </tr>
       </thead>
-      <tbody id="history"></tbody>
+      <tbody id="results"></tbody>
     </table>
   </div>
 
 </div>
 
-<script src="app.js"></script>
+<script>
+ const players = ["Wael", "Hakimi", "Mojahed", "Hamzah"];
+
+const rounds = [
+  ["Wael", "Hakimi"],
+  ["Mojahed", "Hamzah"],
+  ["Wael", "Mojahed"],
+  ["Hakimi", "Hamzah"],
+  ["Mojahed", "Hakimi"],
+  ["Wael", "Hamzah"]
+];
+
+
+  let roundIndex = 0;
+  let roundNumber = 1;
+
+  function renderMatch() {
+    const [a, b] = rounds[roundIndex % rounds.length];
+    p1.innerText = a;
+    p2.innerText = b;
+    roundText.innerText = `ROUND ${roundNumber}`;
+  }
+
+  function nextRound() {
+    const aScore = Number(s1.value);
+    const bScore = Number(s2.value);
+
+    if (aScore + bScore !== 16) {
+      alert("Total points must be 16");
+      return;
+    }
+
+    const [a, b] = rounds[roundIndex % rounds.length];
+
+    results.innerHTML += `
+      <tr>
+        <td>${roundNumber}</td>
+        <td>${a} vs ${b}</td>
+        <td>${aScore} : ${bScore}</td>
+      </tr>
+    `;
+
+    s1.value = "";
+    s2.value = "";
+
+    roundIndex++;
+    roundNumber++;
+    renderMatch();
+  }
+
+  renderMatch();
+</script>
+
 </body>
 </html>
