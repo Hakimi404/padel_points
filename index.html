@@ -2,8 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Padel Round Control</title>
+  <title>Padel Arena</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <style>
     body {
       margin: 0;
@@ -18,13 +19,14 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 20px;
+      gap: 24px;
       padding: 20px;
+      text-align: center;
     }
 
     .round {
       font-size: 3rem;
-      font-weight: 800;
+      font-weight: 900;
     }
 
     .match {
@@ -35,9 +37,8 @@
     }
 
     .player {
-      font-weight: 700;
-      min-width: 80px;
-      text-align: center;
+      font-weight: 800;
+      min-width: 140px;
     }
 
     .score {
@@ -47,36 +48,50 @@
       text-align: center;
       background: #111;
       color: #0f0;
-      border: 2px solid #0f0;
-      border-radius: 10px;
+      border: 3px solid #0f0;
+      border-radius: 12px;
     }
 
     button {
-      font-size: 1.5rem;
-      padding: 15px 40px;
-      border-radius: 12px;
+      font-size: 1.6rem;
+      padding: 16px 50px;
+      border-radius: 14px;
       border: none;
       cursor: pointer;
       background: #0f0;
       color: #000;
-      font-weight: 700;
+      font-weight: 900;
+    }
+
+    button:hover {
+      background: #22ff22;
+    }
+
+    h2 {
+      margin-top: 30px;
+      margin-bottom: 10px;
     }
 
     table {
-      margin-top: 20px;
       width: 100%;
-      max-width: 600px;
+      max-width: 700px;
       border-collapse: collapse;
+      margin-top: 10px;
       font-size: 1rem;
     }
 
     th, td {
-      padding: 8px;
+      padding: 10px;
       border-bottom: 1px solid #333;
       text-align: center;
     }
 
-    .history {
+    th {
+      color: #0f0;
+      font-weight: 700;
+    }
+
+    .history-wrapper {
       max-height: 300px;
       overflow-y: auto;
       width: 100%;
@@ -89,19 +104,40 @@
 
 <div class="app">
 
+  <!-- ROUND -->
   <div id="roundText" class="round">ROUND 1</div>
 
+  <!-- CURRENT MATCH -->
   <div class="match">
-    <div id="p1" class="player">A</div>
+    <div id="p1" class="player">Wael</div>
     <input id="s1" class="score" type="number" />
     <div>:</div>
     <input id="s2" class="score" type="number" />
-    <div id="p2" class="player">B</div>
+    <div id="p2" class="player">Hakimi</div>
   </div>
 
+  <!-- ACTION -->
   <button onclick="nextRound()">NEXT ROUND</button>
 
-  <div class="history">
+  <!-- PLAYER STATS -->
+  <h2>Player Stats</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Player</th>
+        <th>Rounds</th>
+        <th>Wins</th>
+        <th>Losses</th>
+        <th>Ties</th>
+        <th>Total Points</th>
+      </tr>
+    </thead>
+    <tbody id="stats"></tbody>
+  </table>
+
+  <!-- ROUND HISTORY -->
+  <h2>Rounds History</h2>
+  <div class="history-wrapper">
     <table>
       <thead>
         <tr>
@@ -117,26 +153,49 @@
 </div>
 
 <script>
- const players = ["Wael", "Hakimi", "Mojahed", "Hamzah"];
+  const players = ["Wael", "Hakimi", "Mojahed", "Hamzah"];
 
-const rounds = [
-  ["Wael", "Hakimi"],
-  ["Mojahed", "Hamzah"],
-  ["Wael", "Mojahed"],
-  ["Hakimi", "Hamzah"],
-  ["Mojahed", "Hakimi"],
-  ["Wael", "Hamzah"]
-];
-
+  // FAIR ROTATION — nobody waits long
+  const rotation = [
+    ["Wael", "Hakimi"],
+    ["Mojahed", "Hamzah"],
+    ["Wael", "Mojahed"],
+    ["Hakimi", "Hamzah"],
+    ["Mojahed", "Hakimi"],
+    ["Wael", "Hamzah"]
+  ];
 
   let roundIndex = 0;
   let roundNumber = 1;
 
+  const stats = {};
+  players.forEach(p => {
+    stats[p] = { rounds: 0, wins: 0, losses: 0, ties: 0, points: 0 };
+  });
+
   function renderMatch() {
-    const [a, b] = rounds[roundIndex % rounds.length];
+    const [a, b] = rotation[roundIndex % rotation.length];
     p1.innerText = a;
     p2.innerText = b;
     roundText.innerText = `ROUND ${roundNumber}`;
+    renderStats();
+  }
+
+  function renderStats() {
+    stats.innerHTML = "";
+    players.forEach(p => {
+      const s = stats[p];
+      stats.innerHTML += `
+        <tr>
+          <td>${p}</td>
+          <td>${s.rounds}</td>
+          <td>${s.wins}</td>
+          <td>${s.losses}</td>
+          <td>${s.ties}</td>
+          <td>${s.points}</td>
+        </tr>
+      `;
+    });
   }
 
   function nextRound() {
@@ -144,12 +203,33 @@ const rounds = [
     const bScore = Number(s2.value);
 
     if (aScore + bScore !== 16) {
-      alert("Total points must be 16");
+      alert("Total points must be exactly 16");
       return;
     }
 
-    const [a, b] = rounds[roundIndex % rounds.length];
+    const [a, b] = rotation[roundIndex % rotation.length];
 
+    // rounds
+    stats[a].rounds++;
+    stats[b].rounds++;
+
+    // points
+    stats[a].points += aScore;
+    stats[b].points += bScore;
+
+    // win / loss / tie
+    if (aScore > bScore) {
+      stats[a].wins++;
+      stats[b].losses++;
+    } else if (bScore > aScore) {
+      stats[b].wins++;
+      stats[a].losses++;
+    } else {
+      stats[a].ties++;
+      stats[b].ties++;
+    }
+
+    // history table
     results.innerHTML += `
       <tr>
         <td>${roundNumber}</td>
