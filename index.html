@@ -99,16 +99,20 @@
       display: flex;
       justify-content: center;
     }
+
+    .reset {
+      margin-top: 20px;
+      background: #ff4444;
+      color: #000;
+    }
   </style>
 </head>
 <body>
 
 <div class="app">
 
-  <!-- ROUND -->
   <div id="roundText" class="round">ROUND 1</div>
 
-  <!-- CURRENT MATCH -->
   <div class="match">
     <div id="p1" class="player">Wael</div>
     <input id="s1" class="score" type="number" />
@@ -117,10 +121,8 @@
     <div id="p2" class="player">Hakimi</div>
   </div>
 
-  <!-- ACTION -->
   <button onclick="nextRound()">NEXT ROUND</button>
 
-  <!-- PLAYER STATS -->
   <h2>Player Stats</h2>
   <table>
     <thead>
@@ -136,7 +138,6 @@
     <tbody id="stats"></tbody>
   </table>
 
-  <!-- ROUND HISTORY -->
   <h2>Rounds History</h2>
   <div class="history-wrapper">
     <table>
@@ -151,12 +152,13 @@
     </table>
   </div>
 
+  <button class="reset" onclick="resetSession()">NEW SESSION</button>
+
 </div>
 
 <script>
   const players = ["Wael", "Hakimi", "Mojahed", "Hamzah"];
 
-  // Fair rotation: nobody waits long
   const rotation = [
     ["Wael", "Hakimi"],
     ["Mojahed", "Hamzah"],
@@ -169,17 +171,31 @@
   let roundIndex = 0;
   let roundNumber = 1;
 
-  // Player statistics (DATA)
   const playerStats = {};
   players.forEach(p => {
-    playerStats[p] = {
-      rounds: 0,
-      wins: 0,
-      losses: 0,
-      ties: 0,
-      points: 0
-    };
+    playerStats[p] = { rounds: 0, wins: 0, losses: 0, ties: 0, points: 0 };
   });
+
+  function saveState() {
+    localStorage.setItem("padelState", JSON.stringify({
+      roundIndex,
+      roundNumber,
+      playerStats,
+      history: results.innerHTML
+    }));
+  }
+
+  function loadState() {
+    const raw = localStorage.getItem("padelState");
+    if (!raw) return false;
+
+    const state = JSON.parse(raw);
+    roundIndex = state.roundIndex;
+    roundNumber = state.roundNumber;
+    Object.assign(playerStats, state.playerStats);
+    results.innerHTML = state.history;
+    return true;
+  }
 
   function renderMatch() {
     const [a, b] = rotation[roundIndex % rotation.length];
@@ -190,12 +206,10 @@
   }
 
   function renderStats() {
-    const statsBody = document.getElementById("stats");
-    statsBody.innerHTML = "";
-
+    stats.innerHTML = "";
     players.forEach(p => {
       const s = playerStats[p];
-      statsBody.innerHTML += `
+      stats.innerHTML += `
         <tr>
           <td>${p}</td>
           <td>${s.rounds}</td>
@@ -219,15 +233,11 @@
 
     const [a, b] = rotation[roundIndex % rotation.length];
 
-    // rounds played
     playerStats[a].rounds++;
     playerStats[b].rounds++;
-
-    // points
     playerStats[a].points += aScore;
     playerStats[b].points += bScore;
 
-    // win / loss / tie
     if (aScore > bScore) {
       playerStats[a].wins++;
       playerStats[b].losses++;
@@ -239,7 +249,6 @@
       playerStats[b].ties++;
     }
 
-    // round history
     results.innerHTML += `
       <tr>
         <td>${roundNumber}</td>
@@ -254,10 +263,20 @@
     roundIndex++;
     roundNumber++;
     renderMatch();
+    saveState();
   }
 
-  // initial render
-  renderMatch();
+  function resetSession() {
+    if (!confirm("Start a new session?")) return;
+    localStorage.removeItem("padelState");
+    location.reload();
+  }
+
+  if (!loadState()) {
+    renderMatch();
+  } else {
+    renderMatch();
+  }
 </script>
 
 </body>
