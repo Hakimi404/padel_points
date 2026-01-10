@@ -29,7 +29,6 @@
       font-weight: 900;
     }
 
-    /* MATCH ROW (RESPONSIVE) */
     .match {
       display: flex;
       align-items: center;
@@ -109,7 +108,6 @@
       justify-content: center;
     }
 
-    /* 📱 MOBILE TWEAKS */
     @media (max-width: 480px) {
       .round {
         font-size: 2.2rem;
@@ -141,11 +139,11 @@
 
   <!-- CURRENT MATCH -->
   <div class="match">
-    <div id="p1" class="player">Wael</div>
+    <div id="p1" class="player">Hakimi</div>
     <input id="s1" class="score" type="number" />
     <div>:</div>
     <input id="s2" class="score" type="number" />
-    <div id="p2" class="player">Hakimi</div>
+    <div id="p2" class="player">Laith</div>
   </div>
 
   <!-- ACTION -->
@@ -187,15 +185,11 @@
 </div>
 
 <script>
-  const players = ["Wael", "Hakimi", "Mojahed", "Hamzah"];
+  const players = ["Hakimi", "Laith"];
 
+  // Always the same matchup
   const rotation = [
-    ["Wael", "Hakimi"],
-    ["Mojahed", "Hamzah"],
-    ["Wael", "Mojahed"],
-    ["Hakimi", "Hamzah"],
-    ["Mojahed", "Hakimi"],
-    ["Wael", "Hamzah"]
+    ["Hakimi", "Laith"]
   ];
 
   let roundIndex = 0;
@@ -228,7 +222,7 @@
   }
 
   function renderMatch() {
-    const [a, b] = rotation[roundIndex % rotation.length];
+    const [a, b] = rotation[0];
     p1.innerText = a;
     p2.innerText = b;
     roundText.innerText = `ROUND ${roundNumber}`;
@@ -261,7 +255,7 @@
       return;
     }
 
-    const [a, b] = rotation[roundIndex % rotation.length];
+    const [a, b] = rotation[0];
 
     playerStats[a].rounds++;
     playerStats[b].rounds++;
@@ -290,7 +284,6 @@
     s1.value = "";
     s2.value = "";
 
-    roundIndex++;
     roundNumber++;
     renderMatch();
     saveState();
